@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Wildlife Token</title>
+    <meta name="description" content="A playful, glowing token animation. All funds help wild animals.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="logo.jpeg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="logo.jpeg">
+    <style>
+      :root {
+        --bg-1: #0c1220;
+        --bg-2: #0a1a2a;
+        --accent: #78ffc6;
+        --accent-2: #3ddcff;
+        --token-outer: #1c273d;
+        --token-inner: #0a84ff;
+        --glow: rgba(61, 220, 255, 0.6);
+        --sparkle: #ffffff;
+        --leaf: #7bd389;
+        --paw: #ffd18b;
+        --text: #eaf6ff;
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: 'Outfit', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        color: var(--text);
+        background: radial-gradient(1200px 800px at 50% 20%, var(--bg-2), var(--bg-1));
+        overflow: hidden;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      /* Background wildlife silhouettes */
+      .silhouettes {
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0.15;
+      }
+      .silhouettes svg {
+        position: absolute;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+      }
+      .silhouettes .leaf { stroke: var(--leaf); }
+      .silhouettes .paw { stroke: var(--paw); }
+
+      .silhouettes .s1 { top: 10%; left: 8%; transform: rotate(-8deg); animation: drift 18s ease-in-out infinite; }
+      .silhouettes .s2 { top: 75%; left: 15%; transform: rotate(6deg); animation: drift 22s ease-in-out infinite reverse; }
+      .silhouettes .s3 { top: 20%; right: 10%; transform: rotate(14deg); animation: drift 20s ease-in-out infinite; }
+      .silhouettes .s4 { bottom: 12%; right: 6%; transform: rotate(-12deg); animation: drift 24s ease-in-out infinite reverse; }
+
+      @keyframes drift {
+        0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+        50% { transform: translateY(-8px) rotate(calc(var(--r, 0deg) + 2deg)); }
+      }
+
+      /* Soft animated waves */
+      .waves {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 0.5;
+      }
+      .wave {
+        position: absolute;
+        width: 200%;
+        left: -50%;
+        height: 40vmin;
+        border-radius: 100%;
+        filter: blur(24px);
+        mix-blend-mode: screen;
+        animation: waveMove var(--speed, 28s) linear infinite;
+      }
+      .wave.w1 { bottom: 8vh; background: radial-gradient(60% 80% at 50% 50%, rgba(61,220,255,0.12), transparent 65%); --speed: 38s; }
+      .wave.w2 { bottom: -6vh; background: radial-gradient(60% 80% at 40% 60%, rgba(120,255,198,0.12), transparent 70%); --speed: 52s; }
+      .wave.w3 { top: -10vh; background: radial-gradient(60% 80% at 60% 40%, rgba(10,132,255,0.10), transparent 70%); --speed: 64s; }
+
+      @keyframes waveMove {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-25%); }
+      }
+
+      /* Central Token */
+      .token-wrap {
+        position: relative;
+        display: grid;
+        place-items: center;
+      }
+      .token-glow {
+        position: absolute;
+        width: clamp(220px, 30vmin, 360px);
+        height: clamp(220px, 30vmin, 360px);
+        border-radius: 50%;
+        background: radial-gradient(55% 55% at 50% 50%, rgba(61,220,255,0.28), rgba(120,255,198,0.12) 60%, transparent 72%);
+        filter: blur(18px);
+        animation: pulse 3.8s ease-in-out infinite;
+      }
+      .token {
+        position: relative;
+        width: clamp(200px, 28vmin, 320px);
+        height: clamp(200px, 28vmin, 320px);
+        border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,0.10) inset,
+          0 0 0 10px rgba(61,220,255,0.06) inset,
+          0 8px 32px rgba(10,132,255,0.25),
+          0 0 120px 40px var(--glow);
+        display: grid;
+        place-items: center;
+        transform-style: preserve-3d;
+        /* Keep strictly centered — no vertical float */
+        cursor: pointer;
+      }
+      .token::before {
+        content: "";
+        position: absolute;
+        inset: 8%;
+        border-radius: 50%;
+        background: radial-gradient(80% 70% at 30% 25%, rgba(255,255,255,0.45), rgba(255,255,255,0) 62%),
+                    radial-gradient(70% 80% at 70% 70%, rgba(0,0,0,0.10), transparent 72%);
+        mix-blend-mode: screen;
+      }
+      .token::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(64% 64% at 50% 60%, rgba(12,18,32,0.45), transparent 72%);
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.10) inset;
+      }
+      .token-content {
+        position: relative;
+        z-index: 1;
+        width: 56%;
+        height: 56%;
+        border-radius: 50%;
+        background: radial-gradient(58% 58% at 50% 48%, rgba(255,255,255,0.18), rgba(255,255,255,0) 72%),
+                    url('logo.jpeg') center/cover no-repeat;
+        box-shadow: 0 0 24px rgba(255,255,255,0.16) inset;
+        transform: translateZ(36px);
+        /* No continuous spin for a calmer VM look */
+      }
+
+      /* Token text */
+      .headline {
+        position: absolute;
+        top: 6vh;
+        width: 100%;
+        text-align: center;
+        padding: 0 16px;
+      }
+      .headline .logo {
+        width: clamp(44px, 6vmax, 72px);
+        height: clamp(44px, 6vmax, 72px);
+        object-fit: cover;
+        border-radius: 20%;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 24px rgba(61,220,255,0.35);
+        border: 1px solid rgba(255,255,255,0.15);
+        backdrop-filter: blur(2px);
+      }
+      
+      .headline p {
+        margin: 8px 0 0 0;
+        opacity: 0.9;
+        font-size: clamp(16px, 2.2vmax, 22px);
+      }
+
+      /* Particles canvas overlay */
+      canvas.particles {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      /* CTA */
+      .cta {
+        position: absolute;
+        bottom: 6vh;
+        display: grid;
+        place-items: center;
+        width: 100%;
+      }
+      .cta a {
+        background: linear-gradient(90deg, var(--accent-2), var(--accent));
+        color: #00121f;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 12px 20px;
+        border-radius: 999px;
+        box-shadow: 0 10px 30px rgba(61,220,255,0.35);
+        transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+      }
+      .cta a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 38px rgba(61,220,255,0.45);
+        filter: saturate(1.15);
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.7; transform: scale(0.98); }
+        50% { opacity: 1; transform: scale(1.02); }
+      }
+      /* Removed float/spin to keep perfect centering */
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .token-glow, .token, .token-content, .wave, .silhouettes .leaf, .silhouettes .paw { animation: none !important; }
+      }
+
+      /* Small screens */
+      @media (max-width: 520px) {
+        .headline { top: 5vh; padding: 0 12px; }
+        .headline h1 { font-size: clamp(18px, 5.2vw, 22px); line-height: 1.2; margin: 0; }
+        .headline p:not(.mobile-sub) { display: none; }
+        .headline .mobile-sub { display: block; font-size: 14px; }
+
+        .token { width: min(64vw, 280px); height: min(64vw, 280px); }
+        .token-glow { width: min(68vw, 300px); height: min(68vw, 300px); filter: blur(14px); }
+
+        .waves { opacity: 0.28; }
+        .silhouettes { opacity: 0.10; }
+
+        .cta { bottom: 4vh; }
+        .cta a { padding: 12px 18px; font-size: 14px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="hero">
+      <div class="waves" aria-hidden="true">
+        <div class="wave w1"></div>
+        <div class="wave w2"></div>
+        <div class="wave w3"></div>
+      </div>
+
+      <div class="silhouettes" aria-hidden="true">
+        <svg class="leaf s1" width="120" height="120" viewBox="0 0 120 120" style="--r:-8deg">
+          <path d="M20,80 C35,15 95,10 100,10 C100,15 90,75 30,95 C30,95 25,97 20,100" />
+          <path d="M50,40 C55,45 60,50 65,55" />
+          <path d="M45,55 C55,60 65,65 75,70" />
+        </svg>
+        <svg class="paw s2" width="120" height="120" viewBox="0 0 120 120" style="--r:6deg">
+          <circle cx="60" cy="80" r="18" />
+          <circle cx="40" cy="50" r="8" />
+          <circle cx="55" cy="45" r="7" />
+          <circle cx="65" cy="45" r="7" />
+          <circle cx="80" cy="50" r="8" />
+        </svg>
+        <svg class="leaf s3" width="140" height="140" viewBox="0 0 140 140" style="--r:14deg">
+          <path d="M30,100 C55,25 120,20 125,20 C123,28 110,95 50,115 C45,117 37,119 30,122" />
+          <path d="M60,50 C70,60 80,70 90,80" />
+        </svg>
+        <svg class="paw s4" width="120" height="120" viewBox="0 0 120 120" style="--r:-12deg">
+          <circle cx="60" cy="80" r="18" />
+          <circle cx="40" cy="50" r="8" />
+          <circle cx="55" cy="45" r="7" />
+          <circle cx="65" cy="45" r="7" />
+          <circle cx="80" cy="50" r="8" />
+        </svg>
+      </div>
+
+      <header class="headline">
+        <h1>Every contribution nurtures habitats and protects wild animals.</h1>
+        <p class="mobile-sub" style="display:none; opacity:0.85; font-size: 14px; margin-top: 6px;">Кожен внесок допомагає захищати диких тварин</p>
+      </header>
+
+      <div class="token-wrap">
+        <div class="token-glow" aria-hidden="true"></div>
+        <div class="token" role="img" aria-label="Interactive glowing token. Funds help wildlife.">
+          <div class="token-content" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <canvas class="particles" aria-hidden="true"></canvas>
+
+      <div class="cta">
+        <a href="#" aria-label="Support wildlife with this token">Invest to Help Wildlife</a>
+      </div>
+    </main>
+
+    <script>
+      (function() {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const smallScreenQuery = window.matchMedia('(max-width: 520px)');
+        function isSmallScreen() { return smallScreenQuery.matches; }
+
+        // Token interactivity: gentle tilt and burst on click
+        const token = document.querySelector('.token');
+        let hoverRAF = null;
+        let targetTiltX = 0, targetTiltY = 0, tiltX = 0, tiltY = 0;
+
+        function onMove(e) {
+          const rect = token.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const x = (e.clientX - cx) / rect.width;
+          const y = (e.clientY - cy) / rect.height;
+          targetTiltX = y * -16; // degrees
+          targetTiltY = x * 16;
+          if (!hoverRAF) animateTilt();
+        }
+
+        function animateTilt() {
+          hoverRAF = requestAnimationFrame(animateTilt);
+          tiltX += (targetTiltX - tiltX) * 0.08;
+          tiltY += (targetTiltY - tiltY) * 0.08;
+          token.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+        }
+
+        function resetTilt() {
+          targetTiltX = 0; targetTiltY = 0;
+          if (!hoverRAF) animateTilt();
+          setTimeout(() => { cancelAnimationFrame(hoverRAF); hoverRAF = null; }, 400);
+        }
+
+        if (!prefersReduced && !isSmallScreen()) {
+          token.addEventListener('mousemove', onMove);
+          token.addEventListener('mouseleave', resetTilt);
+        }
+
+        smallScreenQuery.addEventListener?.('change', () => {
+          // Disable hover tilt on small screens dynamically
+          token.style.transform = '';
+        });
+
+        // Click sparkle burst
+        token.addEventListener('click', (e) => {
+          spawnBurst(e.clientX, e.clientY);
+        });
+
+        // Particles
+        const canvas = document.querySelector('canvas.particles');
+        const ctx = canvas.getContext('2d');
+        let dpr = Math.max(1, window.devicePixelRatio || 1);
+        let particles = [];
+        let maxParticles = isSmallScreen() ? 70 : 140;
+
+        function resize() {
+          const { innerWidth: w, innerHeight: h } = window;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          canvas.style.width = w + 'px';
+          canvas.style.height = h + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          maxParticles = isSmallScreen() ? 70 : 140;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function rand(min, max) { return Math.random() * (max - min) + min; }
+
+        function spawnParticle(x, y, sparkle = false) {
+          const speed = sparkle ? rand(60, 120) : rand(8, 26);
+          const angle = rand(0, Math.PI * 2);
+          const life = sparkle ? rand(0.4, 0.9) : rand(4, 10);
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            r: sparkle ? rand(0.8, 2.2) : rand(0.6, 1.6),
+            life,
+            maxLife: life,
+            color: sparkle ? 'rgba(255,255,255,1)' : (Math.random() < 0.5 ? 'rgba(61,220,255,0.9)' : 'rgba(120,255,198,0.9)'),
+            sparkle
+          });
+        }
+
+        function spawnBurst(cx, cy) {
+          if (prefersReduced) return;
+          for (let i = 0; i < 28; i++) spawnParticle(cx, cy, true);
+        }
+
+        function initParticles() {
+          const w = window.innerWidth; const h = window.innerHeight;
+          particles = [];
+          const base = prefersReduced ? 18 : maxParticles;
+          for (let i = 0; i < base; i++) {
+            spawnParticle(rand(0, w), rand(0, h), false);
+          }
+        }
+        initParticles();
+
+        let last = performance.now();
+        function tick(now) {
+          const dt = Math.min(0.06, (now - last) / 1000); // clamp
+          last = now;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // subtle vignette glow
+          const grad = ctx.createRadialGradient(window.innerWidth/2, window.innerHeight*0.35, 0, window.innerWidth/2, window.innerHeight*0.35, Math.max(window.innerWidth, window.innerHeight)*0.6);
+          grad.addColorStop(0, 'rgba(61,220,255,0.05)');
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const w = window.innerWidth; const h = window.innerHeight;
+
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.life -= dt;
+            if (p.life <= 0) {
+              if (particles.length > maxParticles && !p.sparkle) { particles.splice(i, 1); continue; }
+              // respawn gently
+              p.x = rand(0, w); p.y = rand(0, h);
+              p.vx = rand(-12, 12); p.vy = rand(-6, 6);
+              p.life = p.maxLife = rand(4, 10);
+              p.r = rand(0.6, 1.6);
+              p.sparkle = false;
+              p.color = Math.random() < 0.5 ? 'rgba(61,220,255,0.9)' : 'rgba(120,255,198,0.9)';
+            }
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            // wrap
+            if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
+            if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
+
+            // draw
+            const alpha = Math.max(0, Math.min(1, p.life / p.maxLife));
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color.replace('1)', (0.2 + 0.8 * alpha) + ')');
+            ctx.fill();
+            if (p.sparkle) {
+              ctx.beginPath();
+              ctx.strokeStyle = 'rgba(255,255,255,' + (0.3 + 0.7 * alpha) + ')';
+              ctx.lineWidth = 0.8;
+              ctx.moveTo(p.x - p.r * 2, p.y); ctx.lineTo(p.x + p.r * 2, p.y);
+              ctx.moveTo(p.x, p.y - p.r * 2); ctx.lineTo(p.x, p.y + p.r * 2);
+              ctx.stroke();
+            }
+          }
+
+          if (!prefersReduced) requestAnimationFrame(tick);
+        }
+        if (!prefersReduced) requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+  </html>
+
+
